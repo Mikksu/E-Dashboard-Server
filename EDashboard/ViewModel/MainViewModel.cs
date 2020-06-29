@@ -1,6 +1,12 @@
+using DevExpress.PivotGrid.OLAP.Mdx;
+using DevExpress.Xpf.Grid;
 using EDashboard.Core;
+using EDashboard.OvenMonitoring;
 using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using System;
+using System.Threading;
+using System.Windows;
 
 namespace EDashboard.ViewModel
 {
@@ -18,52 +24,70 @@ namespace EDashboard.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-
-        readonly object lockOvenList = new object();
-
-
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
         /// </summary>
         public MainViewModel()
         {
-            OvenList = new OvenMonitoringDataCollection();
+            MainCoordinator = new Coordinator();
 
-            // Add test ovens.
-
-            for (int i = 1; i <= 5; i++)
-            {
-                AddNewOven(Guid.NewGuid().ToString("N"), $"Oven {i}");
-            }
         }
 
         #region Properties
 
-        public OvenMonitoringDataCollection OvenList { get; }
+        public Coordinator MainCoordinator { get; set; }
+
+
+        public LotInfo SelectedLot { get; set; }
 
         #endregion
 
         #region Methods
 
-        private void OnOvenHeartbeatTimeout(object sender, EventArgs e)
+
+        public void StartDemo()
         {
-            var ovenCtx = sender as OvenMonitoringData;
-            OvenList.Remove(ovenCtx);
+            for (int i = 1; i <= 5; i++)
+            {
+                MainCoordinator.AddNewOven(Guid.NewGuid().ToString("N"), $"Oven {i}");
+                Thread.Sleep(50);
+            }
+
+            var r = new Random();
+
+            for (int i = 0; i < 20; i++)
+            {
+                MainCoordinator.AddLot(MainCoordinator.OvenList[r.Next(0, 4)].HashString, $"Lot {i}" ,25, 30, "testOP");
+                Thread.Sleep(500);
+            }
         }
 
-        /// <summary>
-        /// 增加一个新的烤箱到烤箱列表。
-        /// </summary>
-        /// <param name="Hashstring"></param>
-        /// <param name="Caption"></param>
-        public void AddNewOven(string Hashstring, string Caption)
+        #endregion
+
+        #region Commands
+
+        public RelayCommand TerminateBakingManually
         {
-            lock (lockOvenList)
+            get
             {
-                var ovenCtx = new OvenMonitoringData(Hashstring);
-                ovenCtx.Caption = Caption;
-                ovenCtx.OnHeartbeatTimeout += OnOvenHeartbeatTimeout;
-                OvenList.Add(ovenCtx);
+                return new RelayCommand(() =>
+                {
+                    if (SelectedLot != null)
+                    {
+                        try
+                        {
+                            MainCoordinator.DeleteLot(SelectedLot.LotNum);
+                        }
+                        catch(InvalidOperationException ex)
+                        {
+                            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                     }
+                    else
+                    {
+                        MessageBox.Show("请先选择一个Lot再进行删除。", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                });
             }
         }
 

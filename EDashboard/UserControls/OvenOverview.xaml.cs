@@ -1,4 +1,5 @@
 ﻿using EDashboard.Core;
+using EDashboard.OvenMonitoring;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,15 +18,15 @@ namespace EDashboard.UserControls
 
         #region Dp
 
-        public OvenMonitoringData DataSource
+        public Oven DataSource
         {
-            get { return (OvenMonitoringData)GetValue(DataSourceProperty); }
+            get { return (Oven)GetValue(DataSourceProperty); }
             set { SetValue(DataSourceProperty, value); }
         }
 
         // Using a DependencyProperty as the backing store for DataSource.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty DataSourceProperty =
-            DependencyProperty.Register("DataSource", typeof(OvenMonitoringData), typeof(OvenOverview), new PropertyMetadata(new OvenMonitoringData(Guid.NewGuid().ToString("N"))));
+            DependencyProperty.Register("DataSource", typeof(Oven), typeof(OvenOverview), new PropertyMetadata(new Oven(Guid.NewGuid().ToString("N"))));
 
         #endregion
     }

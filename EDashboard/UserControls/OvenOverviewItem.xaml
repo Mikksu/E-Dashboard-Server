@@ -16,12 +16,12 @@
         <Grid.Resources>
             <Style x:Key="ItemTitleStyle" TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="FontSize" Value="13"/>
+                <Setter Property="FontSize" Value="9"/>
                 <Setter Property="Foreground" Value="#FFB6B6B6"/>
             </Style>
             <Style x:Key="ItemValueStyle" TargetType="TextBlock">
                 <Setter Property="VerticalAlignment" Value="Center"/>
-                <Setter Property="FontSize" Value="18"/>
+                <Setter Property="FontSize" Value="12"/>
                 <Setter Property="Foreground" Value="Black"/>
             </Style>
         </Grid.Resources>

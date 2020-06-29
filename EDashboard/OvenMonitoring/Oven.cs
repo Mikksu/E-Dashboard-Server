@@ -1,17 +1,20 @@
-﻿using System;
+﻿using EDashboard.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace EDashboard.Core
+namespace EDashboard.OvenMonitoring
 {
-    public class OvenMonitoringData : NotifyPropertyChangedBase
+    public class Oven : NotifyPropertyChangedBase
     {
         #region Events
 
         public event EventHandler OnHeartbeatTimeout;
+
+        public event EventHandler<double> OnTemperatureUpdated;
 
         #endregion
 
@@ -25,7 +28,7 @@ namespace EDashboard.Core
         private CancellationTokenSource cts;
         private string _proximate;
 
-        public OvenMonitoringData(string HashString)
+        public Oven(string HashString)
         {
             this.RegisteredTime = DateTime.Now;
             this.LastHeartbeatReportedTime = RegisteredTime;
@@ -34,7 +37,7 @@ namespace EDashboard.Core
             this.RealtimeTemperature = 99.9;
             this.IsRemoveMeRequested = false;
             this.TemperatureHistory = new List<RtTemperaturePoint>();
-            this.ProductList = new List<ProductInfo>();
+            this.ProductList = new List<LotInfo>();
 
             // start the heartbeat task.
             cts = new CancellationTokenSource();
@@ -48,7 +51,8 @@ namespace EDashboard.Core
                         break;
 
                     case HeartbeatReport.ReportEnum.RealtimeTemperature:
-
+                        this.RealtimeTemperature = report.Temperature;
+                        OnTemperatureUpdated?.Invoke(this, report.Temperature);
                         break;
 
                     case HeartbeatReport.ReportEnum.Proximate:
@@ -186,7 +190,7 @@ namespace EDashboard.Core
 
         public List<RtTemperaturePoint> TemperatureHistory { get; }
 
-        public List<ProductInfo> ProductList { get; } 
+        public List<LotInfo> ProductList { get; } 
 
         #endregion
 
@@ -225,11 +229,13 @@ namespace EDashboard.Core
         {
             return new Task(() =>
             {
+                var r = new Random();
+
                 while (true)
                 {
                     // if the heartbeat is not arrived in 5s, remove me.
                     var ts = DateTime.Now - LastHeartbeatReportedTime;
-                    if (ts.TotalSeconds >= 5)
+                    if (ts.TotalSeconds >= 50000000)
                     {
                         Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.RemoveMe, this));
                         break;
@@ -241,11 +247,16 @@ namespace EDashboard.Core
                         proximate =  "--:--:--";
                     else
                     {
-                        var dt = ProductList.Max(p => p.EndTime);
+                        var dt = ProductList.Max(p => p.BakingEndTime);
                         var remain = dt - DateTime.Now;
                         proximate = remain.ToString("HH:mm:ss");
                     }
                     Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.Proximate, proximate));
+
+
+                    // random temperature
+                    var temp = r.NextDouble() * 10;
+                    Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.RealtimeTemperature, temp));
 
                     Thread.Sleep(1000);
                 }
@@ -278,7 +289,7 @@ namespace EDashboard.Core
             this.Report = Report;
         }
 
-        public HeartbeatReport(ReportEnum Report, OvenMonitoringData OvenContext) : this(Report)
+        public HeartbeatReport(ReportEnum Report, Oven OvenContext) : this(Report)
         {
             this.OvenContext = OvenContext;
         }
@@ -297,7 +308,7 @@ namespace EDashboard.Core
 
         public ReportEnum Report { get; }
 
-        public OvenMonitoringData OvenContext { get; }
+        public Oven OvenContext { get; }
 
         public double Temperature { get; }
 

@@ -1,12 +1,9 @@
 ﻿using CommonServiceLocator;
-using DevExpress.Internal.WinApi.Windows.UI.Notifications;
 using EDashboard.Core.Extension;
 using EDashboard.ViewModel;
 using EDashboardService.OvenMonitoring.V1;
 using Grpc.Core;
-using System.Linq;
 using System.Threading.Tasks;
-using System.Windows;
 
 namespace EDashboard.Services
 {
@@ -19,10 +16,10 @@ namespace EDashboard.Services
 
             // add new oven to the list. 
             var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
-            var oven = mainVm.OvenList.FindByHashstring(ovenHash);
+            var oven = mainVm.MainCoordinator.OvenList.FindByHashstring(ovenHash);
             if (oven == null)
             {
-                mainVm.AddNewOven(ovenHash, ovenCaption);
+                mainVm.MainCoordinator.AddNewOven(ovenHash, ovenCaption);
             }
             else
                 oven.Caption = ovenCaption; // the caption might be updated.
@@ -33,7 +30,7 @@ namespace EDashboard.Services
         public override Task<EmptyResponse> ReportRealtimeTemperature(ReportRealtimeTemperatureRequest request, ServerCallContext context)
         {
             var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
-            var oven = mainVm.OvenList.FindByHashstring(request.OvenHash);
+            var oven = mainVm.MainCoordinator.OvenList.FindByHashstring(request.OvenHash);
             
             if(oven != null)
             {
