@@ -1,10 +1,12 @@
 ﻿using EDashboard.Core;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace EDashboard.OvenMonitoring
 {
@@ -28,6 +30,8 @@ namespace EDashboard.OvenMonitoring
         private CancellationTokenSource cts;
         private string _proximate;
 
+        IProgress<HeartbeatReport> progress;
+
         public Oven(string HashString)
         {
             this.RegisteredTime = DateTime.Now;
@@ -37,11 +41,11 @@ namespace EDashboard.OvenMonitoring
             this.RealtimeTemperature = 99.9;
             this.IsRemoveMeRequested = false;
             this.TemperatureHistory = new List<RtTemperaturePoint>();
-            this.ProductList = new List<LotInfo>();
+            this.ProductList = new ObservableCollection<LotInfo>();
 
             // start the heartbeat task.
             cts = new CancellationTokenSource();
-            IProgress<HeartbeatReport> progress = new Progress<HeartbeatReport>(report =>
+            progress = new Progress<HeartbeatReport>(report =>
             {
                 switch (report.Report)
                 {
@@ -51,8 +55,7 @@ namespace EDashboard.OvenMonitoring
                         break;
 
                     case HeartbeatReport.ReportEnum.RealtimeTemperature:
-                        this.RealtimeTemperature = report.Temperature;
-                        OnTemperatureUpdated?.Invoke(this, report.Temperature);
+                        
                         break;
 
                     case HeartbeatReport.ReportEnum.Proximate:
@@ -117,7 +120,7 @@ namespace EDashboard.OvenMonitoring
             {
                 return _realtimeTemp;
             }
-            private set
+            set
             {
                 UpdateProperty(ref _realtimeTemp, value);
             }
@@ -190,7 +193,7 @@ namespace EDashboard.OvenMonitoring
 
         public List<RtTemperaturePoint> TemperatureHistory { get; }
 
-        public List<LotInfo> ProductList { get; } 
+        public ObservableCollection<LotInfo> ProductList { get; }
 
         #endregion
 
@@ -198,25 +201,38 @@ namespace EDashboard.OvenMonitoring
 
         public void AddRealtimeTemperaturePoint(double Temperature, DateTime? Time = null)
         {
-            // 获取当前时间
-            DateTime time = DateTime.Now;
-            if (Time.HasValue)
-                time = Time.Value;
+            if (Application.Current != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    this.RealtimeTemperature = Temperature;
 
-            // 设置实时温度
-            RealtimeTemperature = Temperature;
-            
-            // 添加实时温度到历史列表，并删除指定时间之前的温度采样点。
-            TemperatureHistory.Add(new RtTemperaturePoint(time, Temperature));
-            var lst = TemperatureHistory.RemoveAll(p => p.Time < DateTime.Now.AddMinutes(-10));
+                    // 刷新心跳包超时时间
+                    LastHeartbeatReportedTime = DateTime.Now;
 
-            // 刷新心跳包超时时间
-            LastHeartbeatReportedTime = DateTime.Now;
+                    // 添加实时温度到历史列表，并删除指定时间之前的温度采样点。
+                    TemperatureHistory.Add(new RtTemperaturePoint(DateTime.Now, Temperature));
+                    var lst = TemperatureHistory.RemoveAll(p => p.Time < DateTime.Now.AddMinutes(-10));
 
-            // 更新历史温度最大值、最小值和差值
-            MinTemperature = TemperatureHistory.Min(p => p.Temperature);
-            MaxTemperature = TemperatureHistory.Max(p => p.Temperature);
-            DiffTemperature = MaxTemperature - MinTemperature;
+                    // 刷新心跳包超时时间
+                    LastHeartbeatReportedTime = DateTime.Now;
+
+                    // 更新历史温度最大值、最小值和差值
+                    MinTemperature = TemperatureHistory.Min(p => p.Temperature);
+                    MaxTemperature = TemperatureHistory.Max(p => p.Temperature);
+                    DiffTemperature = MaxTemperature - MinTemperature;
+
+                    // 更新历史温度最大值、最小值和差值
+                    if (Temperature < MinTemperature)
+                        MinTemperature = Temperature;
+                    else if (Temperature > MaxTemperature)
+                        MaxTemperature = Temperature;
+
+                    DiffTemperature = MaxTemperature - MinTemperature;
+
+                    OnTemperatureUpdated?.Invoke(this, Temperature);
+                });
+            }
         }
 
         /// <summary>
@@ -235,7 +251,7 @@ namespace EDashboard.OvenMonitoring
                 {
                     // if the heartbeat is not arrived in 5s, remove me.
                     var ts = DateTime.Now - LastHeartbeatReportedTime;
-                    if (ts.TotalSeconds >= 50000000)
+                    if (ts.TotalSeconds >= 50)
                     {
                         Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.RemoveMe, this));
                         break;
@@ -249,14 +265,14 @@ namespace EDashboard.OvenMonitoring
                     {
                         var dt = ProductList.Max(p => p.BakingEndTime);
                         var remain = dt - DateTime.Now;
-                        proximate = remain.ToString("HH:mm:ss");
+                        proximate = remain.ToString(@"hh\:mm\:ss");
                     }
                     Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.Proximate, proximate));
 
 
                     // random temperature
-                    var temp = r.NextDouble() * 10;
-                    Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.RealtimeTemperature, temp));
+                    //var temp = r.NextDouble() * 10;
+                    //Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.RealtimeTemperature, temp));
 
                     Thread.Sleep(1000);
                 }

@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDashboard", "EDashboard\ED
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDashboardService", "EDashboardService\EDashboardService.csproj", "{34C8A6A6-1BCC-4370-B8C0-DFCEDD67CA44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EDashboardTests", "EDashboardTests\EDashboardTests.csproj", "{DA2CBFEF-33B8-4CD9-9DD5-602C7B99C404}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{34C8A6A6-1BCC-4370-B8C0-DFCEDD67CA44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{34C8A6A6-1BCC-4370-B8C0-DFCEDD67CA44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{34C8A6A6-1BCC-4370-B8C0-DFCEDD67CA44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA2CBFEF-33B8-4CD9-9DD5-602C7B99C404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA2CBFEF-33B8-4CD9-9DD5-602C7B99C404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA2CBFEF-33B8-4CD9-9DD5-602C7B99C404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA2CBFEF-33B8-4CD9-9DD5-602C7B99C404}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

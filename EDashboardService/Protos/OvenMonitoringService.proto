@@ -44,6 +44,9 @@ service OvenMonitoringService {
 
     // Remove the product from the oven.
     rpc Fetch(FetchRequest) returns (EmptyResponse);
+
+    // Check are there overly roasted lot in the specified oven.
+    rpc CheckOverlyRoastedLot(CheckOverlyRoastedLotRequest) returns (CheckOverlyRoastedLotResponse);
 }
 
 message EmptyRequest{
@@ -66,11 +69,24 @@ message ReportRealtimeTemperatureRequest{
 
 message FeedRequest{
     string OvenHash = 1;
-    string TravelCard = 2;
+    string LotNum = 2;
+    int32 Pcs = 3;
+    int32 RoastSec = 4;
+    string OpName = 5;
 }
 
 message FetchRequest{
     string OvenHash = 1;
+    string LotNum = 2;
 }
 
+message CheckOverlyRoastedLotRequest
+{
+    string OvenHash = 1;
+}
+
+message CheckOverlyRoastedLotResponse
+{
+    bool HasOne = 1;
+}
 

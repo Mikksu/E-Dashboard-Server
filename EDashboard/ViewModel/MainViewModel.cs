@@ -4,6 +4,7 @@ using EDashboard.Core;
 using EDashboard.OvenMonitoring;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
+using Grpc.Core;
 using System;
 using System.Threading;
 using System.Windows;
@@ -62,6 +63,12 @@ namespace EDashboard.ViewModel
             }
         }
 
+
+        public bool CheckOverlyRoasted(string OvenHashString)
+        {
+            return MainCoordinator.CheckOverRoastLot(OvenHashString);
+        }
+
         #endregion
 
         #region Commands
@@ -76,11 +83,11 @@ namespace EDashboard.ViewModel
                     {
                         try
                         {
-                            MainCoordinator.DeleteLot(SelectedLot.LotNum);
+                            MainCoordinator.DeleteLot(SelectedLot.Oven.HashString, SelectedLot.LotNum);
                         }
-                        catch(InvalidOperationException ex)
+                        catch(RpcException ex)
                         {
-                            MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                            MessageBox.Show(ex.Status.Detail, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
                      }
                     else

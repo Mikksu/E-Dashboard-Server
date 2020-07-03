@@ -11,7 +11,7 @@
             x:Class="EDashboard.UserControls.OvenOverview"
             xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
              mc:Ignorable="d" 
-             d:DesignHeight="120" d:DesignWidth="300" Name="ucRoot">
+             d:DesignHeight="120" d:DesignWidth="400" Name="ucRoot">
     <UserControl.Resources>
         <core:DebugDummyConverter x:Key="DebugDummyConverter" />
     </UserControl.Resources>
@@ -26,6 +26,7 @@
                 <RowDefinition Height="25"/>
                 <RowDefinition />
             </Grid.RowDefinitions>
+            
             <Border Grid.ColumnSpan="2" Background="#66000000">
                 <Grid>
                     <TextBlock Text="{Binding Caption}" Margin="10,0,0,0" VerticalAlignment="Center" FontSize="14" Foreground="White" FontFamily="Arial Black" HorizontalAlignment="Left"/>
@@ -33,6 +34,7 @@
                 </Grid>
 
             </Border>
+            
             <Grid Grid.Row="1" Margin="5">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
@@ -58,12 +60,8 @@
                 </Grid>
 
             </Grid>
-            <dxga:DigitalGaugeControl Grid.Row="1" Grid.Column="1" SymbolCount="3" Margin="-10"
-                                      Text="{Binding RealtimeTemperature, StringFormat={}{0:0.0}}" >
-                <dxga:DigitalGaugeControl.SymbolView>
-                    <dxga:SevenSegmentsView />
-                </dxga:DigitalGaugeControl.SymbolView>
-            </dxga:DigitalGaugeControl>
+            
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RealtimeTemperature,StringFormat={}{0:0.0}}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" FontSize="50" FontFamily="Bernard MT Condensed" />
 
         </Grid>
     </Border>

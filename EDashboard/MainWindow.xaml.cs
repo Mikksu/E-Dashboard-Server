@@ -40,10 +40,10 @@ namespace EDashboard
 
             //server.ShutdownAsync().Wait();
 
-            Task.Run(() =>
-            {
-                ServiceLocator.Current.GetInstance<MainViewModel>().StartDemo();
-            });
+            //Task.Run(() =>
+            //{
+            //    ServiceLocator.Current.GetInstance<MainViewModel>().StartDemo();
+            //});
 
             
 

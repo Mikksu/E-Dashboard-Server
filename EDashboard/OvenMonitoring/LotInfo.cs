@@ -28,16 +28,32 @@ namespace EDashboard.OvenMonitoring
         private string _lotNum;
         private double _progress;
         private TimeSpan _remain;
+        private Guid _uuid;
 
-        public LotInfo(Oven oven, string lotNum, int pcs, TimeSpan bakingDurationRequest, string opName)
+        public LotInfo(
+            Oven oven, string lotNum, int pcs, TimeSpan bakingDurationRequest, string opName, 
+            string ovenHashstring = "", Guid? Uuid = null, DateTime? FeedingTime = null)
         {
+            if (Uuid != null)
+                this.Uuid = Uuid.Value;
+            else
+                this.Uuid = Guid.NewGuid();
+
+            if (FeedingTime != null)
+                this.FeedingTime = FeedingTime.Value;
+            else
+                this.FeedingTime = DateTime.Now;
+
+            if (oven == null && OvenHashstring != "")
+                this.OvenHashstring = ovenHashstring;
+
             this.Oven = oven;
             this.LotNum = lotNum;
             this.Pcs = pcs;
-            this.FeedingTime = DateTime.Now;
+            
             this.BakingDurationRequest = bakingDurationRequest;
             this.Operator = opName;
-            this.BakingEndTime = FeedingTime + bakingDurationRequest;
+            this.BakingEndTime = this.FeedingTime + bakingDurationRequest;
 
             TemperatureHistory = new ObservableCollection<double>();
 
@@ -60,8 +76,6 @@ namespace EDashboard.OvenMonitoring
                 }
             });
 
-            this.Oven.OnTemperatureUpdated += Oven_OnTemperatureUpdated;
-
             Debug.WriteLine($"{LotNum} added!");
 
             StartBgTask(progress);
@@ -69,6 +83,17 @@ namespace EDashboard.OvenMonitoring
 
         #region Properties
 
+        public Guid Uuid
+        {
+            get
+            {
+                return _uuid;
+            }
+            private set
+            {
+                _uuid = value;
+            }
+        }
 
         /// <summary>
         /// 所属烤箱
@@ -79,12 +104,19 @@ namespace EDashboard.OvenMonitoring
             {
                 return _oven;
             }
-            private set
+            set
             {
                 UpdateProperty(ref _oven, value);
+
+                if (this._oven != null)
+                {
+                    this.OvenHashstring = _oven.HashString;
+                    _oven.OnTemperatureUpdated += Oven_OnTemperatureUpdated;
+                }
             }
         }
 
+        public string OvenHashstring { get; private set; }
         
         public string LotNum
         {

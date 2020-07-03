@@ -1,9 +1,13 @@
 ﻿using DevExpress.Data.Extensions;
+using DevExpress.DataProcessing;
 using EDashboard.OvenMonitoring;
+using Grpc.Core;
 using Meziantou.Framework.WPF.Collections;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace EDashboard.Core
 {
@@ -20,7 +24,19 @@ namespace EDashboard.Core
             ThreadPool.SetMinThreads(100, 100);
 
             this.OvenList = new ConcurrentObservableCollection<Oven>();
+
             this.LotList = new ConcurrentObservableCollection<LotInfo>();
+
+            IProgress<LotInfo[]> prog = new Progress<LotInfo[]>(x =>
+            {
+                LotList.AddRange(x);
+                
+            });
+
+            Task.Run(() =>
+            {
+                loadUnfinishedLots(prog);
+            });
         }
 
 
@@ -48,7 +64,16 @@ namespace EDashboard.Core
             {
                 OvenList.Remove(s as Oven);
             };
+
             OvenList.Add(ovenCtx);
+
+            // binding the oven to the lots....
+            var lots = LotList.Where(x => x.OvenHashstring == ovenCtx.HashString);
+            foreach (var lot in lots)
+                lot.Oven = ovenCtx;
+
+
+            ovenCtx.ProductList.AddRange(lots);
         }
 
         public void AddLot(string OvenHash, string lotNum, int pcs, int bakingSec, string opName)
@@ -58,28 +83,86 @@ namespace EDashboard.Core
                 // find the oven by the hash string.
                 var oven = OvenList.FirstOrDefault(x => x.HashString == OvenHash);
                 if (oven == null)
-                    throw new InvalidOperationException("当前烤箱处于离线状态。");
+                    throw new RpcException(new Status(StatusCode.Unknown, "当前烤箱处于离线状态。"));
 
                 // check if the lot has been existed.
                 var existLot = LotList.FirstOrDefault(x => x.LotNum == lotNum);
                 if (existLot != null)
-                    throw new InvalidOperationException($"当前Lot已经存在于烤箱 [{existLot.Oven}] 中。");
+                    throw new RpcException(new Status(StatusCode.Unknown, $"当前Lot已经存在于烤箱 [{existLot.Oven}] 中。"));
 
                 var lotInfo = new LotInfo(oven, lotNum, pcs, new TimeSpan(0, 0, bakingSec), opName);
                 this.LotList.Add(lotInfo);
+
+                // add lot to the oven.
+                oven.ProductList.Add(lotInfo);
+
+                try
+                {
+                    var db = new SqliteDB();
+                    db.InsertNewLot(lotInfo);
+                }
+                catch(Exception ex)
+                {
+                    Debug.WriteLine(ex);
+                }
             }
         }
 
-        public void DeleteLot(string LotNum)
+        public void DeleteLot(string OvenHashString, string LotNum)
         {
             lock(LotListLock)
             {
-               
-                var id = LotList.FindIndex(x => x.LotNum == LotNum);
+                var lot = LotList.FirstOrDefault(x => x.LotNum == LotNum && x.Oven.HashString == OvenHashString);
+                if(lot == null)
+                    throw new RpcException(new Status(StatusCode.Unknown, $"无法在烤箱 [{OvenHashString}] 中找到Lot [{LotNum}]。"));
+
+                // update the overdue field of the database...
+                var db = new SqliteDB();
+                db.RoastingFinished(lot);
+
+                // remove the lot from the list.
+                var id = LotList.FindIndex(x => x.Oven.HashString == OvenHashString && x.LotNum == LotNum);
                 if (id > -1)
                     LotList.RemoveAt(id);
                 else
-                    throw new InvalidOperationException($"无法找到Lot [{LotNum}]。");
+                    throw new RpcException(new Status(StatusCode.Unknown, $"无法在烤箱 [{OvenHashString}] 中找到Lot [{LotNum}]。"));
+            }
+        }
+
+        /// <summary>
+        /// Check are there overly roasted lot in the specified oven.
+        /// </summary>
+        /// <param name="OvenHashString"></param>
+        /// <returns></returns>
+        public bool CheckOverRoastLot(string OvenHashString)
+        {
+            lock (LotListLock)
+            {
+                var lots = LotList.FirstOrDefault(x => x.Oven.HashString == OvenHashString && x.Overdue.TotalSeconds > 0);
+                if (lots != null)
+                    return true;
+                else
+                    return false;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private void loadUnfinishedLots(IProgress<LotInfo[]> progress)
+        {
+            var db = new SqliteDB();
+
+            try
+            {
+                var lots = db.FindUnfinishedLot();
+                if (lots.Length > 0)
+                    progress.Report(lots);
+            }
+            catch(AggregateException ae)
+            {
+
             }
         }
 

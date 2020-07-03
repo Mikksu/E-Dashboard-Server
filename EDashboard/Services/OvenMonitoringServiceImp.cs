@@ -34,6 +34,8 @@ namespace EDashboard.Services
             
             if(oven != null)
             {
+                // oven.AddRealtimeTemperaturePoint(request.Temperature);
+
                 oven.AddRealtimeTemperaturePoint(request.Temperature);
                 return Task.FromResult(new EmptyResponse());
             }
@@ -48,12 +50,24 @@ namespace EDashboard.Services
 
         public override Task<EmptyResponse> Feed(FeedRequest request, ServerCallContext context)
         {
-            return base.Feed(request, context);
+            var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            mainVm.MainCoordinator.AddLot(request.OvenHash, request.LotNum, request.Pcs, request.RoastSec, request.OpName);
+            return Task.FromResult(new EmptyResponse());
         }
 
         public override Task<EmptyResponse> Fetch(FetchRequest request, ServerCallContext context)
         {
-            return base.Fetch(request, context);
+            var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            mainVm.MainCoordinator.DeleteLot(request.OvenHash, request.LotNum);
+            return Task.FromResult(new EmptyResponse());
+        }
+
+        // Check are there overly roasted lots in the specified oven.
+        public override Task<CheckOverlyRoastedLotResponse> CheckOverlyRoastedLot(CheckOverlyRoastedLotRequest request, ServerCallContext context)
+        {
+            var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
+            var hasOne = mainVm.CheckOverlyRoasted(request.OvenHash);
+            return Task.FromResult(new CheckOverlyRoastedLotResponse() { HasOne = hasOne });
         }
     }
 }

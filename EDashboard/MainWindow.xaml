@@ -13,7 +13,7 @@
     xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" 
     x:Class="EDashboard.MainWindow"
         mc:Ignorable="d"
-        Title="Irixi E-Dashboard" Height="1020" Width="1240">
+        Title="Irixi E-Dashboard" Height="1020" Width="1240" Icon="speedometer.png">
     <Window.Resources>
       
     </Window.Resources>
@@ -22,37 +22,50 @@
     </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="1*"/>
         </Grid.ColumnDefinitions>
-
-        <ItemsControl ItemsSource="{Binding Main.MainCoordinator.OvenList.AsObservable, Mode=OneWay}" >
-            <!--<ItemsControl.Template>
+        
+        <!-- Left Container -->
+        <StackPanel Background="#FF2B2B2B">
+            <Border Height="100" Background="#FFEC7228">
+                <StackPanel Margin="5,20,0,0">
+                    <StackPanel.Resources>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="White"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <TextBlock Text="IRIXIPhotonics" FontSize="14"/>
+                    <TextBlock Text="E-Dashboard" FontSize="36" FontWeight="Bold"/>
+                </StackPanel>
+            </Border>
+            <ItemsControl ItemsSource="{Binding Main.MainCoordinator.OvenList.AsObservable, Mode=OneWay}">
+                <!--<ItemsControl.Template>
                 <ControlTemplate TargetType="ItemsControl">
                     <ScrollViewer x:Name="scrollViewer" VerticalScrollBarVisibility="Auto">
                         <ItemsPresenter ></ItemsPresenter>
                     </ScrollViewer>
                 </ControlTemplate>
             </ItemsControl.Template>-->
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel IsItemsHost="True" CanVerticallyScroll="True" Background="#FF2B2B2B">
-                        <StackPanel.Resources>
-                            <Style TargetType="{x:Type UserControls:OvenOverview}">
-                                <Setter Property="Margin" Value="5"/>
-                                <Setter Property="Width" Value="250"/>
-                                <Setter Property="Height" Value="100"/>
-                            </Style>
-                        </StackPanel.Resources>
-                    </StackPanel>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <UserControls:OvenOverview DataSource="{Binding}"/>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel IsItemsHost="True" CanVerticallyScroll="True" >
+                            <StackPanel.Resources>
+                                <Style TargetType="{x:Type UserControls:OvenOverview}">
+                                    <Setter Property="Margin" Value="5,10,5,0"/>
+                                    <Setter Property="Height" Value="100"/>
+                                </Style>
+                            </StackPanel.Resources>
+                        </StackPanel>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <UserControls:OvenOverview DataSource="{Binding}"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
 
         <dxg:GridControl 
             Grid.Column="1" 
@@ -68,7 +81,7 @@
             <dxg:GridControl.ContextMenu>
                 <ContextMenu>
                     <MenuItem
-                        Header="手动终止"
+                        Header="手动清除"
                         Command="{Binding Main.TerminateBakingManually}" >
                         <MenuItem.Icon>
                             <Image Source="{dx:DXImage 'SvgImages/Dashboards/Delete.svg'}"/>
@@ -82,7 +95,7 @@
                 <dxg:GridColumn.CellDisplayTemplate>
                     <DataTemplate>
                         <Border Background="Transparent">
-                            <ProgressBar Margin="1" Minimum="0" Maximum="100" Value="{Binding Value}">
+                            <ProgressBar Margin="1" Minimum="0" Maximum="100" Value="{Binding Value}" >
                                 <ProgressBar.Template>
                                     <ControlTemplate>
                                         <Grid>

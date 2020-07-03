@@ -16,7 +16,7 @@ namespace EDashboard
     {
         protected override void OnStartup(StartupEventArgs e)
         {
-            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisDarkName;
+            ApplicationThemeHelper.ApplicationThemeName = Theme.MetropolisLightName;
 
             base.OnStartup(e);
         }

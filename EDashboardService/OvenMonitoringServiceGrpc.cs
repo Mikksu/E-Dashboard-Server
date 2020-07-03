@@ -47,6 +47,8 @@ namespace EDashboardService.OvenMonitoring.V1 {
     static readonly grpc::Marshaller<global::EDashboardService.OvenMonitoring.V1.ReportRealtimeTemperatureRequest> __Marshaller_EDashboardService_OvenMonitoring_v1_ReportRealtimeTemperatureRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::EDashboardService.OvenMonitoring.V1.ReportRealtimeTemperatureRequest.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::EDashboardService.OvenMonitoring.V1.FeedRequest> __Marshaller_EDashboardService_OvenMonitoring_v1_FeedRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::EDashboardService.OvenMonitoring.V1.FeedRequest.Parser.ParseFrom);
     static readonly grpc::Marshaller<global::EDashboardService.OvenMonitoring.V1.FetchRequest> __Marshaller_EDashboardService_OvenMonitoring_v1_FetchRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::EDashboardService.OvenMonitoring.V1.FetchRequest.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest> __Marshaller_EDashboardService_OvenMonitoring_v1_CheckOverlyRoastedLotRequest = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest.Parser.ParseFrom);
+    static readonly grpc::Marshaller<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse> __Marshaller_EDashboardService_OvenMonitoring_v1_CheckOverlyRoastedLotResponse = grpc::Marshallers.Create((arg) => global::Google.Protobuf.MessageExtensions.ToByteArray(arg), global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse.Parser.ParseFrom);
 
     static readonly grpc::Method<global::EDashboardService.OvenMonitoring.V1.RegisterRequest, global::EDashboardService.OvenMonitoring.V1.EmptyResponse> __Method_Register = new grpc::Method<global::EDashboardService.OvenMonitoring.V1.RegisterRequest, global::EDashboardService.OvenMonitoring.V1.EmptyResponse>(
         grpc::MethodType.Unary,
@@ -75,6 +77,13 @@ namespace EDashboardService.OvenMonitoring.V1 {
         "Fetch",
         __Marshaller_EDashboardService_OvenMonitoring_v1_FetchRequest,
         __Marshaller_EDashboardService_OvenMonitoring_v1_EmptyResponse);
+
+    static readonly grpc::Method<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest, global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse> __Method_CheckOverlyRoastedLot = new grpc::Method<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest, global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse>(
+        grpc::MethodType.Unary,
+        __ServiceName,
+        "CheckOverlyRoastedLot",
+        __Marshaller_EDashboardService_OvenMonitoring_v1_CheckOverlyRoastedLotRequest,
+        __Marshaller_EDashboardService_OvenMonitoring_v1_CheckOverlyRoastedLotResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -126,6 +135,17 @@ namespace EDashboardService.OvenMonitoring.V1 {
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       public virtual global::System.Threading.Tasks.Task<global::EDashboardService.OvenMonitoring.V1.EmptyResponse> Fetch(global::EDashboardService.OvenMonitoring.V1.FetchRequest request, grpc::ServerCallContext context)
+      {
+        throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
+      }
+
+      /// <summary>
+      /// Check are there overly roasted lot in the specified oven.
+      /// </summary>
+      /// <param name="request">The request received from the client.</param>
+      /// <param name="context">The context of the server-side call handler being invoked.</param>
+      /// <returns>The response to send back to the client (wrapped by a task).</returns>
+      public virtual global::System.Threading.Tasks.Task<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse> CheckOverlyRoastedLot(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -331,6 +351,50 @@ namespace EDashboardService.OvenMonitoring.V1 {
       {
         return CallInvoker.AsyncUnaryCall(__Method_Fetch, null, options, request);
       }
+      /// <summary>
+      /// Check are there overly roasted lot in the specified oven.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse CheckOverlyRoastedLot(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return CheckOverlyRoastedLot(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Check are there overly roasted lot in the specified oven.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The response received from the server.</returns>
+      public virtual global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse CheckOverlyRoastedLot(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.BlockingUnaryCall(__Method_CheckOverlyRoastedLot, null, options, request);
+      }
+      /// <summary>
+      /// Check are there overly roasted lot in the specified oven.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
+      /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
+      /// <param name="cancellationToken">An optional token for canceling the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse> CheckOverlyRoastedLotAsync(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      {
+        return CheckOverlyRoastedLotAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+      }
+      /// <summary>
+      /// Check are there overly roasted lot in the specified oven.
+      /// </summary>
+      /// <param name="request">The request to send to the server.</param>
+      /// <param name="options">The options for the call.</param>
+      /// <returns>The call object.</returns>
+      public virtual grpc::AsyncUnaryCall<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse> CheckOverlyRoastedLotAsync(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest request, grpc::CallOptions options)
+      {
+        return CallInvoker.AsyncUnaryCall(__Method_CheckOverlyRoastedLot, null, options, request);
+      }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       protected override OvenMonitoringServiceClient NewInstance(ClientBaseConfiguration configuration)
       {
@@ -346,7 +410,8 @@ namespace EDashboardService.OvenMonitoring.V1 {
           .AddMethod(__Method_Register, serviceImpl.Register)
           .AddMethod(__Method_ReportRealtimeTemperature, serviceImpl.ReportRealtimeTemperature)
           .AddMethod(__Method_Feed, serviceImpl.Feed)
-          .AddMethod(__Method_Fetch, serviceImpl.Fetch).Build();
+          .AddMethod(__Method_Fetch, serviceImpl.Fetch)
+          .AddMethod(__Method_CheckOverlyRoastedLot, serviceImpl.CheckOverlyRoastedLot).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the  service binding logic.
@@ -359,6 +424,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
       serviceBinder.AddMethod(__Method_ReportRealtimeTemperature, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::EDashboardService.OvenMonitoring.V1.ReportRealtimeTemperatureRequest, global::EDashboardService.OvenMonitoring.V1.EmptyResponse>(serviceImpl.ReportRealtimeTemperature));
       serviceBinder.AddMethod(__Method_Feed, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::EDashboardService.OvenMonitoring.V1.FeedRequest, global::EDashboardService.OvenMonitoring.V1.EmptyResponse>(serviceImpl.Feed));
       serviceBinder.AddMethod(__Method_Fetch, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::EDashboardService.OvenMonitoring.V1.FetchRequest, global::EDashboardService.OvenMonitoring.V1.EmptyResponse>(serviceImpl.Fetch));
+      serviceBinder.AddMethod(__Method_CheckOverlyRoastedLot, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest, global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse>(serviceImpl.CheckOverlyRoastedLot));
     }
 
   }
