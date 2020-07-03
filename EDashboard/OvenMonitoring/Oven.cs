@@ -31,6 +31,7 @@ namespace EDashboard.OvenMonitoring
         private string _proximate;
 
         IProgress<HeartbeatReport> progress;
+        private int _lotAmount;
 
         public Oven(string HashString)
         {
@@ -41,7 +42,6 @@ namespace EDashboard.OvenMonitoring
             this.RealtimeTemperature = 99.9;
             this.IsRemoveMeRequested = false;
             this.TemperatureHistory = new List<RtTemperaturePoint>();
-            this.ProductList = new ObservableCollection<LotInfo>();
 
             // start the heartbeat task.
             cts = new CancellationTokenSource();
@@ -191,9 +191,21 @@ namespace EDashboard.OvenMonitoring
             }
         }
 
+
         public List<RtTemperaturePoint> TemperatureHistory { get; }
 
-        public ObservableCollection<LotInfo> ProductList { get; }
+        public int LotAmount
+        {
+            get
+            {
+                return _lotAmount;
+            }
+            set
+            {
+                UpdateProperty(ref _lotAmount, value);
+            }
+        }
+
 
         #endregion
 
@@ -212,7 +224,7 @@ namespace EDashboard.OvenMonitoring
 
                     // 添加实时温度到历史列表，并删除指定时间之前的温度采样点。
                     TemperatureHistory.Add(new RtTemperaturePoint(DateTime.Now, Temperature));
-                    var lst = TemperatureHistory.RemoveAll(p => p.Time < DateTime.Now.AddMinutes(-10));
+                    var lst = TemperatureHistory.RemoveAll(p => p.Time < DateTime.Now.AddMinutes(-5));
 
                     // 刷新心跳包超时时间
                     LastHeartbeatReportedTime = DateTime.Now;
@@ -257,17 +269,17 @@ namespace EDashboard.OvenMonitoring
                         break;
                     }
 
-                    // Calculate proximate.
-                    string proximate = "";
-                    if (ProductList.Count <= 0)
-                        proximate =  "--:--:--";
-                    else
-                    {
-                        var dt = ProductList.Max(p => p.BakingEndTime);
-                        var remain = dt - DateTime.Now;
-                        proximate = remain.ToString(@"hh\:mm\:ss");
-                    }
-                    Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.Proximate, proximate));
+                    //// Calculate proximate.
+                    //string proximate = "";
+                    //if (ProductList.Count <= 0)
+                    //    proximate =  "--:--:--";
+                    //else
+                    //{
+                    //    var dt = ProductList.Max(p => p.BakingEndTime);
+                    //    var remain = dt - DateTime.Now;
+                    //    proximate = remain.ToString(@"hh\:mm\:ss");
+                    //}
+                    //Progress.Report(new HeartbeatReport(HeartbeatReport.ReportEnum.Proximate, proximate));
 
 
                     // random temperature

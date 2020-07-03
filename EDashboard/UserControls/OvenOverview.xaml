@@ -55,7 +55,7 @@
                         <ColumnDefinition Width="1*"/>
                         <ColumnDefinition Width="1*"/>
                     </Grid.ColumnDefinitions>
-                    <local:OvenOverviewItem Grid.Column="0" Title="Amount" Value="{Binding ProductList.Count}" Grid.ColumnSpan="2"/>
+                    <local:OvenOverviewItem Grid.Column="0" Title="Amount" Value="{Binding LotAmount}" Grid.ColumnSpan="2"/>
                     <local:OvenOverviewItem Grid.Column="1" Title="Proximate" Value="{Binding Proximate}" Grid.ColumnSpan="2"/>
                 </Grid>
 

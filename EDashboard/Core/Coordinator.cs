@@ -73,7 +73,7 @@ namespace EDashboard.Core
                 lot.Oven = ovenCtx;
 
 
-            ovenCtx.ProductList.AddRange(lots);
+            ovenCtx.LotAmount = lots.Count();
         }
 
         public void AddLot(string OvenHash, string lotNum, int pcs, int bakingSec, string opName)
@@ -93,8 +93,8 @@ namespace EDashboard.Core
                 var lotInfo = new LotInfo(oven, lotNum, pcs, new TimeSpan(0, 0, bakingSec), opName);
                 this.LotList.Add(lotInfo);
 
-                // add lot to the oven.
-                oven.ProductList.Add(lotInfo);
+                // calculate the amount of the lot no. in the oven.
+                oven.LotAmount = _calculate_lotNum_in_oven(OvenHash);
 
                 try
                 {
@@ -107,6 +107,7 @@ namespace EDashboard.Core
                 }
             }
         }
+
 
         public void DeleteLot(string OvenHashString, string LotNum)
         {
@@ -126,6 +127,13 @@ namespace EDashboard.Core
                     LotList.RemoveAt(id);
                 else
                     throw new RpcException(new Status(StatusCode.Unknown, $"无法在烤箱 [{OvenHashString}] 中找到Lot [{LotNum}]。"));
+
+                // calculate lot number in the oven.
+                var oven = OvenList.FirstOrDefault(x => x.HashString == OvenHashString);
+                if(oven != null)
+                {
+                    oven.LotAmount = _calculate_lotNum_in_oven(OvenHashString);
+                }
             }
         }
 
@@ -166,6 +174,17 @@ namespace EDashboard.Core
             }
         }
 
+
+        /// <summary>
+        /// Calculate the lot amount in the specified oven.
+        /// </summary>
+        /// <param name="ovenHashstring"></param>
+        /// <returns></returns>
+        private int _calculate_lotNum_in_oven(string ovenHashstring)
+        {
+            // calculate the amount of the lot no. in the oven.
+            return LotList.Count(x => x.Oven.HashString == ovenHashstring);
+        }
         #endregion
     }
 }
