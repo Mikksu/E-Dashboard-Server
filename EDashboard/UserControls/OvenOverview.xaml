@@ -20,7 +20,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1*"/>
-                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="120"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="25"/>
@@ -60,7 +60,7 @@
                 </Grid>
 
             </Grid>
-            
+
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding RealtimeTemperature,StringFormat={}{0:0.0}}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,10,0" FontSize="50" FontFamily="Bernard MT Condensed" />
 
         </Grid>
