@@ -1,9 +1,13 @@
 ﻿using CommonServiceLocator;
 using EDashboard.Core.Extension;
+using EDashboard.OvenMonitoring;
 using EDashboard.ViewModel;
 using EDashboardService.OvenMonitoring.V1;
 using Grpc.Core;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 
 namespace EDashboard.Services
 {
@@ -62,12 +66,24 @@ namespace EDashboard.Services
             return Task.FromResult(new EmptyResponse());
         }
 
-        // Check are there overly roasted lots in the specified oven.
+        /// <summary>
+        /// Check are there overly roasted lots in the specified oven 
+        /// and return the top 5 lots which are mostly overdue.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="context"></param>
+        /// <returns></returns>
         public override Task<CheckOverlyRoastedLotResponse> CheckOverlyRoastedLot(CheckOverlyRoastedLotRequest request, ServerCallContext context)
         {
             var mainVm = ServiceLocator.Current.GetInstance<MainViewModel>();
-            var hasOne = mainVm.CheckOverlyRoasted(request.OvenHash);
-            return Task.FromResult(new CheckOverlyRoastedLotResponse() { HasOne = hasOne });
+            var lotOverdued = mainVm.CheckOverlyRoasted(request.OvenHash);
+
+            var resp = new CheckOverlyRoastedLotResponse();
+
+            if(lotOverdued != null)
+                resp.LotNos.AddRange(lotOverdued.Select(x=>x.LotNum));
+
+            return Task.FromResult(resp);
         }
     }
 }

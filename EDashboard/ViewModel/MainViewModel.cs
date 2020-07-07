@@ -64,7 +64,7 @@ namespace EDashboard.ViewModel
         }
 
 
-        public bool CheckOverlyRoasted(string OvenHashString)
+        public LotInfo[] CheckOverlyRoasted(string OvenHashString)
         {
             return MainCoordinator.CheckOverRoastLot(OvenHashString);
         }

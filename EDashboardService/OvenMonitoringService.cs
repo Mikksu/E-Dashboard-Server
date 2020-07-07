@@ -34,8 +34,8 @@ namespace EDashboardService.OvenMonitoring.V1 {
             "EhAKCFJvYXN0U2VjGAQgASgFEg4KBk9wTmFtZRgFIAEoCSIwCgxGZXRjaFJl",
             "cXVlc3QSEAoIT3Zlbkhhc2gYASABKAkSDgoGTG90TnVtGAIgASgJIjAKHENo",
             "ZWNrT3Zlcmx5Um9hc3RlZExvdFJlcXVlc3QSEAoIT3Zlbkhhc2gYASABKAki",
-            "LwodQ2hlY2tPdmVybHlSb2FzdGVkTG90UmVzcG9uc2USDgoGSGFzT25lGAEg",
-            "ASgIMqUFChVPdmVuTW9uaXRvcmluZ1NlcnZpY2USdAoIUmVnaXN0ZXISNC5F",
+            "LwodQ2hlY2tPdmVybHlSb2FzdGVkTG90UmVzcG9uc2USDgoGTG90Tm9zGAEg",
+            "AygJMqUFChVPdmVuTW9uaXRvcmluZ1NlcnZpY2USdAoIUmVnaXN0ZXISNC5F",
             "RGFzaGJvYXJkU2VydmljZS5PdmVuTW9uaXRvcmluZy52MS5SZWdpc3RlclJl",
             "cXVlc3QaMi5FRGFzaGJvYXJkU2VydmljZS5PdmVuTW9uaXRvcmluZy52MS5F",
             "bXB0eVJlc3BvbnNlEpYBChlSZXBvcnRSZWFsdGltZVRlbXBlcmF0dXJlEkUu",
@@ -61,7 +61,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
             new pbr::GeneratedClrTypeInfo(typeof(global::EDashboardService.OvenMonitoring.V1.FeedRequest), global::EDashboardService.OvenMonitoring.V1.FeedRequest.Parser, new[]{ "OvenHash", "LotNum", "Pcs", "RoastSec", "OpName" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::EDashboardService.OvenMonitoring.V1.FetchRequest), global::EDashboardService.OvenMonitoring.V1.FetchRequest.Parser, new[]{ "OvenHash", "LotNum" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest), global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotRequest.Parser, new[]{ "OvenHash" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse), global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse.Parser, new[]{ "HasOne" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse), global::EDashboardService.OvenMonitoring.V1.CheckOverlyRoastedLotResponse.Parser, new[]{ "LotNos" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1136,7 +1136,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public CheckOverlyRoastedLotResponse(CheckOverlyRoastedLotResponse other) : this() {
-      hasOne_ = other.hasOne_;
+      lotNos_ = other.lotNos_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1145,15 +1145,14 @@ namespace EDashboardService.OvenMonitoring.V1 {
       return new CheckOverlyRoastedLotResponse(this);
     }
 
-    /// <summary>Field number for the "HasOne" field.</summary>
-    public const int HasOneFieldNumber = 1;
-    private bool hasOne_;
+    /// <summary>Field number for the "LotNos" field.</summary>
+    public const int LotNosFieldNumber = 1;
+    private static readonly pb::FieldCodec<string> _repeated_lotNos_codec
+        = pb::FieldCodec.ForString(10);
+    private readonly pbc::RepeatedField<string> lotNos_ = new pbc::RepeatedField<string>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasOne {
-      get { return hasOne_; }
-      set {
-        hasOne_ = value;
-      }
+    public pbc::RepeatedField<string> LotNos {
+      get { return lotNos_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1169,14 +1168,14 @@ namespace EDashboardService.OvenMonitoring.V1 {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if (HasOne != other.HasOne) return false;
+      if(!lotNos_.Equals(other.lotNos_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      if (HasOne != false) hash ^= HasOne.GetHashCode();
+      hash ^= lotNos_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1190,10 +1189,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void WriteTo(pb::CodedOutputStream output) {
-      if (HasOne != false) {
-        output.WriteRawTag(8);
-        output.WriteBool(HasOne);
-      }
+      lotNos_.WriteTo(output, _repeated_lotNos_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -1202,9 +1198,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      if (HasOne != false) {
-        size += 1 + 1;
-      }
+      size += lotNos_.CalculateSize(_repeated_lotNos_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -1216,9 +1210,7 @@ namespace EDashboardService.OvenMonitoring.V1 {
       if (other == null) {
         return;
       }
-      if (other.HasOne != false) {
-        HasOne = other.HasOne;
-      }
+      lotNos_.Add(other.lotNos_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -1230,8 +1222,8 @@ namespace EDashboardService.OvenMonitoring.V1 {
           default:
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
-          case 8: {
-            HasOne = input.ReadBool();
+          case 10: {
+            lotNos_.AddEntriesFrom(input, _repeated_lotNos_codec);
             break;
           }
         }

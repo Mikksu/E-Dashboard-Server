@@ -141,16 +141,25 @@ namespace EDashboard.Core
         /// Check are there overly roasted lot in the specified oven.
         /// </summary>
         /// <param name="OvenHashString"></param>
+        /// <param name="MaxReturned">The max number of overdued lot the method returned.</param>
         /// <returns></returns>
-        public bool CheckOverRoastLot(string OvenHashString)
+        public LotInfo[] CheckOverRoastLot(string OvenHashString, int MaxReturned = 5)
         {
             lock (LotListLock)
             {
-                var lots = LotList.FirstOrDefault(x => x.Oven.HashString == OvenHashString && x.Overdue.TotalSeconds > 0);
-                if (lots != null)
-                    return true;
-                else
-                    return false;
+                try
+                {
+                    var lots = LotList
+                        .OrderByDescending(a => a.Overdue)
+                        .Where(x => x.Oven.HashString == OvenHashString && x.Overdue.TotalSeconds > 0)
+                        .Take(5);
+
+                    return lots.ToArray();
+                }
+                catch (Exception)
+                {
+                    return null;
+                }
             }
         }
 
